@@ -26,4 +26,12 @@ public class TaskService {
         Optional<Task> taskEntidade = taskRepository.findById(id);
         return taskMapper.entidadeParaDto(taskEntidade.get());
     }
+
+    @Transactional
+    public TaskDTO inserindoNovaTarefa(TaskDTO dto) {
+        Task entidade = taskMapper.dtoParaEntidadeTask(dto);
+        entidade.setCompleted(false);
+        entidade = taskRepository.save(entidade);
+        return taskMapper.entidadeParaDto(entidade);
+    }
 }

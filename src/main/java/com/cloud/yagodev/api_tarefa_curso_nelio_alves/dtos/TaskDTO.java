@@ -9,12 +9,6 @@ public class TaskDTO {
     public TaskDTO() {
     }
 
-    public TaskDTO(Long id, String description, boolean completed) {
-        this.id = id;
-        this.description = description;
-        this.completed = completed;
-    }
-
     public Long getId() {
         return id;
     }
