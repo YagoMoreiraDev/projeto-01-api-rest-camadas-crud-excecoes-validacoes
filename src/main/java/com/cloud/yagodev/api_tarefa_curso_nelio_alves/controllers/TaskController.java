@@ -7,8 +7,12 @@ import com.cloud.yagodev.api_tarefa_curso_nelio_alves.services.TaskService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -33,12 +37,22 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tarefa encontrada com sucesso!"),
     })
-    public TaskDTO pegarUmaTarefa(@PathVariable Long id) {
-        return taskService.buscarTarefaPorId(id);
+    public ResponseEntity<TaskDTO> pegarUmaTarefa(@PathVariable Long id) {
+        return ResponseEntity.ok(taskService.buscarTarefaPorId(id));
     }
-
+    /* Forma prática porém não é a melhor
     @PostMapping
-    public TaskDTO inserirTarefa(@RequestBody TaskDTO dto) {
-        return taskService.inserindoNovaTarefa(dto);
+    public ResponseEntity<TaskDTO> inserirTarefa(@RequestBody TaskDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskService.inserindoNovaTarefa(dto));
+    }
+    */
+    //Forma correta real
+    @PostMapping
+    public ResponseEntity<TaskDTO> inserirTarefa(@RequestBody TaskDTO taskDTOdto) {
+        taskDTOdto = taskService.inserindoNovaTarefa(taskDTOdto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(taskDTOdto.getId()).toUri();
+        return ResponseEntity.created(uri).body(taskDTOdto);
     }
 }
